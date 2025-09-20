@@ -25,7 +25,16 @@ mountRenderer(document.getElementById('game-container'));
 window.addEventListener('resize', resizeRenderer);
 
 // Prevent crashes from permission-related rejections
-window.addEventListener('unhandledrejection', (e) => { console.warn('Unhandled rejection suppressed:', e.reason); e.preventDefault(); });
+window.addEventListener('unhandledrejection', (e) => {
+    const msg = (e?.reason && (e.reason.message || String(e.reason))) || '';
+    if (msg.includes('Permissions check failed')) { e.preventDefault(); return; }
+    console.warn('Unhandled rejection suppressed:', e.reason);
+    e.preventDefault();
+});
+window.addEventListener('error', (e) => {
+    const msg = (e?.message || '');
+    if (msg.includes('Permissions check failed')) { e.preventDefault(); }
+}, true);
 
 // --- GAME LOOP ---
 function animate() {
