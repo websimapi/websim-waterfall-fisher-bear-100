@@ -24,6 +24,9 @@ import { mountRenderer } from './scene.js';
 mountRenderer(document.getElementById('game-container'));
 window.addEventListener('resize', resizeRenderer);
 
+// Prevent crashes from permission-related rejections
+window.addEventListener('unhandledrejection', (e) => { console.warn('Unhandled rejection suppressed:', e.reason); e.preventDefault(); });
+
 // --- GAME LOOP ---
 function animate() {
     requestAnimationFrame(animate); 

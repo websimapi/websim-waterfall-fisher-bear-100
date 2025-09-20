@@ -73,7 +73,7 @@ async function ensureRoom() {
 }
 async function ensureMyRecord() {
   await ensureRoom();
-  if (!room) return; // no global backend available
+  if (!room || !currentUser) return; // bail when no backend or no user permissions
   const coll = room.collection('player_v1');
   // try a few times to avoid creating during initial empty getList
   for (let attempt = 0; attempt < 3 && !myRecord; attempt++) {
@@ -95,7 +95,7 @@ async function ensureMyRecord() {
 export async function submitScoreToDB(score, replayUrl) {
   try {
     await ensureMyRecord();
-    if (!room || !myRecord) return; // gracefully bail when no backend
+    if (!room || !myRecord || !currentUser) return; // gracefully bail when no backend/record/user
     if (window.__replayUploadPromise) { try { await window.__replayUploadPromise; } catch {} }
     const coll = room.collection('player_v1');
     let data = {};
